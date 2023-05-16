@@ -1,0 +1,35 @@
+Function next_work_day(StartDate As Date, duration_ As Long, Optional IsHoliday As Boolean = True, _
+            Optional HolidayTabName As String = "PublicHolidayT", Optional DateColName As String = "Dates")
+   
+   Dim nextDate As Date, result As Date
+   Dim rst_public_holiday As Recordset
+   
+   Set rst_public_holiday = CurrentDb.OpenRecordset("SELECT " & DateColName & " FROM " & HolidayTabName, dbOpenSnapshot)
+   If rst_public_holiday.RecordCount = 0 Then IsHoliday = False 'No public holiday
+   
+   nextDate = StartDate
+   
+   Do While True
+      'Holidays
+      If IsHoliday Then
+         rst_public_holiday.FindFirst (DateColName & "=" & convDate_American(nextDate)) 'if date is public holiday
+         If Not rst_public_holiday.NoMatch Then
+            duration_ = duration_ + 1 'Add one day to the duration if public holiday
+         End If
+      End If
+      
+      'Not Weekend
+      If Not (Weekday(nextDate, vbSunday) = vbSunday Or Weekday(nextDate, vbSunday) = vbSaturday) Then
+         duration_ = duration_ - 1 'reduce duration by 1 when it's weekday
+      End If
+      
+      If duration_ = 0 Then Exit Do 'Get Out of Loop
+      
+      nextDate = nextDate + 1 'Increase date by 1
+   Loop
+   
+   rst_public_holiday.Close
+   Set rst_public_holiday = Nothing
+   
+   next_work_day = nextDate
+End Function
