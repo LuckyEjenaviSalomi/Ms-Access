@@ -1,0 +1,24 @@
+Function DeleteAllRelationships() As String
+' WARNING: Deletes all relationships in the current database.
+    Dim db As Database      ' Current DB
+    Dim rex As Relations    ' Relations of currentDB.
+    Dim rel As Relation     ' Relationship being deleted.
+    Dim iKt As Integer      ' Count of relations deleted.
+    Dim sMsg As String      ' MsgBox string.
+
+    sMsg = "About to delete ALL relationships between tables in the current database." & vbCrLf & "Continue?"
+    If MsgBox(sMsg, vbQuestion + vbYesNo + vbDefaultButton2, "Are you sure?") = vbNo Then
+        DeleteAllRelationships = "Operation cancelled"
+        Exit Function
+    End If
+
+    Set db = CurrentDb()
+    Set rex = db.Relations
+    iKt = rex.count
+    Do While rex.count > 0
+        Debug.Print rex(0).Name
+        rex.Delete rex(0).Name
+    Loop
+    DeleteAllRelationships = iKt & " relationship(s) deleted"
+    
+End Function
