@@ -1,0 +1,10 @@
+Public Function eomonth(date_ As Date, Optional months_offset As Long = 0) As Date
+   Dim next_month_date As Date
+   Dim start_next_month_date As Date
+   
+   next_month_date = DateAdd("m", months_offset + 1, date_) 'DateAdd_(Month_m, 1, date_) 'DateAdd("m", 1, date_)
+   start_next_month_date = CDate(Year(next_month_date) & "/" & Month(next_month_date) & "/1")
+   
+   eomonth = start_next_month_date - 1
+   
+End Function
