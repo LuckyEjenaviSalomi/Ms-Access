@@ -1,41 +1,26 @@
-Public Function WordMatch(ByVal Text As String, ByVal Word As String) As Boolean
-Dim RightChar As String
-Dim LeftChar As String
-Dim IStart As Integer
-Dim IEnd As Integer
-Dim Flag As Boolean
-Dim Alphabet As String
- Alphabet = "abcdefghijklmnopqrstuvwxyz"
- Flag = True
-
-IStart = InStr(Text, Word)
-
-If Not (IStart > 0) Then
-    Flag = False
-Else
-    IEnd = IStart + Len(Word) - 1
-
-    If (IStart = 1 And IEnd = 1) Then GoTo WordMatched
-
-        If IStart > 1 Then
-            LeftChar = Mid(Text, IStart - 1, 1)
-            'LeftChar = Mid(Text, IStart - 1 - 3, 4)
-            'MsgBox "L'" & LeftChar & "' - " & Text & " - " & Word
-            If InStr(Alphabet, LeftChar) > 0 Then
-                Flag = False
-            End If
-        End If
-        If (IEnd < Len(Text)) Then
-            RightChar = Mid(Text, IEnd + 1, 1)
-            'RightChar = Mid(Text, IEnd + 1, 4)
-            'MsgBox "R'" & RightChar & "' - " & Text & " - " & Word
-            If InStr(Alphabet, RightChar) > 0 Then
-                Flag = False
-            End If
-        End If
-
-    'End If
-
-End If
-WordMatched: WordMatch = Flag
+Function WordMatch(Body_of_Text As String, findText As String, _
+                Optional IsCaseSensitive As Boolean) As Integer 'Return the position of the Word
+                
+    Dim iStart As Long, iEnd As Long 'Start and End of `findText` in the `Body_of_Text`
+    Dim extractedText As String
+    
+    WordMatch = 0
+    
+    'String compare Method
+    Dim compareMethod As VbCompareMethod
+    compareMethod = IIf(IsCaseSensitive, vbBinaryCompare, vbTextCompare)
+    
+    'Check if Word exist at all
+    iStart = InStr(1, Body_of_Text, findText, compareMethod)
+    If iStart = 0 Then Exit Function 'No Match, jump out - return False
+    
+    iEnd = InStr(iStart, Body_of_Text, " ") 'Find the position of the next space after the `findText`
+    If iEnd = 0 Then iEnd = Len(Body_of_Text) + 1 ' + 1 to put imaginary space at the end
+    
+    'Extract the text from the body of text
+    extractedText = Mid(Body_of_Text, iStart, (iEnd - iStart))
+    
+    'Return Value
+    If StrComp(extractedText, findText, compareMethod) = 0 Then WordMatch = iStart
+    
 End Function
