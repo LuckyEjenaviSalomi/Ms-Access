@@ -12,13 +12,11 @@ Public Function Wrap_String(val_input As Variant, Optional UseSingleQuote As Boo
             Wrap_String = """" & Wrap_String & """"
         End If
       Case "Date"
-         'Check if date contains time component
          Dim time_val As String
          time_val = Format(val_input, "HH:MM:SS")
          
          Wrap_String = Month(val_input) & "/" & Day(val_input) & "/" & Year(val_input)
-         Wrap_String = "#" & Wrap_String & _
-                        IIf(time_val = "00:00:00", "", " " & time_val) & "#"
+         Wrap_String = "#" & Wrap_String & IIf(time_val = "00:00:00", "", " " & time_val) & "#"
    End Select
     
    
