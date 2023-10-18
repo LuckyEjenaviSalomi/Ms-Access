@@ -15,8 +15,8 @@ Public Function Wrap_String(val_input As Variant, Optional UseSingleQuote As Boo
          Dim time_val As String
          time_val = Format(val_input, "HH:MM:SS")
          
-         Wrap_String = Month(val_input) & "/" & Day(val_input) & "/" & Year(val_input)
-         Wrap_String = "#" & Wrap_String & IIf(time_val = "00:00:00", "", " " & time_val) & "#"
+         Wrap_String = Month(val_input) & "/" & Day(val_input) & "/" & Year(val_input) 'Without time component
+         Wrap_String = "#" & Wrap_String & IIf(time_val = "00:00:00", "", " " & time_val) & "#" 'Add time component if available
    End Select
     
    
