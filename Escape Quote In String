@@ -1,4 +1,4 @@
-Public Function Wrap_String(val_input As Variant, Optional UseSingleQuote As Boolean = True)
+Public Function Wrap_String(val_input As Variant, Optional UseSingleQuote As Boolean = False)
    
    Wrap_String = val_input
    
