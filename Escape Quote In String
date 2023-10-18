@@ -1,14 +1,15 @@
-Function Wrap_String(val_input As Variant, Optional UseSingleQuote As Boolean = True)
+Public Function Wrap_String(val_input As Variant, Optional UseSingleQuote As Boolean = True)
    
    Wrap_String = val_input
    
    Select Case TypeName(val_input)
       Case "String"
         If UseSingleQuote Then
-            Wrap_String = Replace(val_input, "'", "''") 'Escape single quote
+            Wrap_String = "'" & Replace(val_input, "'", "''") & "'"  'Escape single quote
             Wrap_String = "'" & Wrap_String & "'"
         Else
-           Wrap_String = """" & val_input & """"
+            Wrap_String = """" & Replace(val_input, """", """""") & """" 'Escape double quote
+            Wrap_String = """" & Wrap_String & """"
         End If
       Case "Date"
          'Check if date contains time component
@@ -19,4 +20,6 @@ Function Wrap_String(val_input As Variant, Optional UseSingleQuote As Boolean = 
          Wrap_String = "#" & Wrap_String & _
                         IIf(time_val = "00:00:00", "", " " & time_val) & "#"
    End Select
+    
+   
 End Function
