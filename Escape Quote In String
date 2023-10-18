@@ -4,11 +4,11 @@ Public Function Wrap_String(val_input As Variant, Optional UseSingleQuote As Boo
    
    Select Case TypeName(val_input)
       Case "String"
+        Wrap_String = Replace(val_input, """", """""") 'Escape double quote
         If UseSingleQuote Then
-            Wrap_String = "'" & Replace(val_input, "'", "''") & "'"  'Escape single quote
+            Wrap_String = IIf(InStr(1, val_input, "'") <> 0, Replace(val_input, "'", "''"), val_input) 'Escape single quote
             Wrap_String = "'" & Wrap_String & "'"
         Else
-            Wrap_String = """" & Replace(val_input, """", """""") & """" 'Escape double quote
             Wrap_String = """" & Wrap_String & """"
         End If
       Case "Date"
