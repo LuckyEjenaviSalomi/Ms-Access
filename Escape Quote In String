@@ -1,0 +1,22 @@
+Function Wrap_String(val_input As Variant, Optional UseSingleQuote As Boolean = True)
+   
+   Wrap_String = val_input
+   
+   Select Case TypeName(val_input)
+      Case "String"
+        If UseSingleQuote Then
+            Wrap_String = Replace(val_input, "'", "''") 'Escape single quote
+            Wrap_String = "'" & Wrap_String & "'"
+        Else
+           Wrap_String = """" & val_input & """"
+        End If
+      Case "Date"
+         'Check if date contains time component
+         Dim time_val As String
+         time_val = Format(val_input, "HH:MM:SS")
+         
+         Wrap_String = Month(val_input) & "/" & Day(val_input) & "/" & Year(val_input)
+         Wrap_String = "#" & Wrap_String & _
+                        IIf(time_val = "00:00:00", "", " " & time_val) & "#"
+   End Select
+End Function
