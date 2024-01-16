@@ -54,6 +54,8 @@ Public Function ExportToExcel(SQLQuery As String, Optional ByVal ReportName = "R
         .HorizontalAlignment = 1 'xlGeneral
         .VerticalAlignment = -4160  'xlTop
         .ReadingOrder = -5002  'xlContext
+        .WrapText = True
+        .range("1:1").Font.Bold = True 'format the header row
     End With
     
     'Activate Excel window
