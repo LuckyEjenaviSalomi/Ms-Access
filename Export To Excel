@@ -1,0 +1,82 @@
+Public Function ExportToExcel(SQLQuery As String, Optional ByVal ReportName = "Report")
+    'Variable declaration
+    Dim strQuery As String
+    Dim lCounter As Long, rCounter As Long
+    Dim rsRecordset As Recordset
+    
+    '---Late Binding------------
+    Dim objExcel As Object
+    Dim wkbReport As Object
+    Dim wksReport As Object
+    '---------------------------
+    
+    '----------Early binding----------------
+'    Dim objExcel As Excel.Application
+'    Dim wkbReport As Excel.Workbook
+'    Dim wksReport As Excel.Worksheet
+   '----------------------------------------
+    
+    'Create new excel file
+    Set objExcel = CreateObject("Excel.Application")
+    objExcel.Visible = True
+    Set wkbReport = objExcel.Workbooks.Add
+    Set wksReport = wkbReport.Worksheets(1)
+    wksReport.Name = ReportName
+    
+    'Set the query
+    strQuery = SQLQuery
+    
+    
+    'Execute the query on the database
+    On Error GoTo Error_Query
+      Set rsRecordset = CurrentDb.OpenRecordset(strQuery, dbOpenSnapshot)
+    On Error GoTo 0
+    
+    On Error Resume Next
+    'Add header in row 1 of Excel sheet, column 2
+    For lCounter = 0 To rsRecordset.Fields.count - 1
+        wksReport.Cells(1, lCounter + 2).value = rsRecordset.Fields(lCounter).Name
+    Next lCounter
+    
+    'Export data to Excel sheet from column 2
+    wksReport.Cells(2, 2).CopyFromRecordset rsRecordset
+    
+    'Write line numbers on the first column, starting from row 2
+    wksReport.Cells(1, 1).value = "S/N" 'Line Number Header
+    For rCounter = 2 To wksReport.Cells(1, 1).currentregion.Rows.count
+      wksReport.Cells(rCounter, 1).value = rCounter - 1
+    Next rCounter
+    
+    
+    'Auto fit Excel columns to adjust as per data
+    With wksReport.Cells
+        .entirecolumn.AutoFit
+        .HorizontalAlignment = 1 'xlGeneral
+        .VerticalAlignment = -4160  'xlTop
+        .ReadingOrder = -5002  'xlContext
+    End With
+    
+    'Activate Excel window
+'    MinimizeWindow
+    objExcel.Workbooks(wkbReport.Name).Windows(1).Activate 'Application.Windows(wkbReport.Name).Activate
+    wkbReport.Windows(1).WindowState = -4137  'xlMaximized 'Maximize window
+      'papp.Presentations(ppres.Name).Windows(1).Activate '=========Guide=========
+    DoEvents
+    
+    
+    'Close the objects
+    Set rsRecordset = Nothing
+    Set wksReport = Nothing
+    Set wkbReport = Nothing
+    Set objExcel = Nothing
+    
+    DoEvents
+    'Show the message to user if need be
+      'MsgBox "Successfully Exported.", , "Done!!!"
+    Exit Function
+    
+'Error handler if query does not execute
+Error_Query:
+    MsgBox "Error: " & Err.Description, vbCritical
+    Exit Function
+End Function
