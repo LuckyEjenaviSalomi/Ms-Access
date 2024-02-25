@@ -1,0 +1,9 @@
+Public Sub load_picture(img As Image, filepath As String)
+    With img
+        .PictureType = 0 'Linked - 0, Embed - 1
+        .SizeMode = 0 'Clip - 0, Stretch - 1, Zoom - 2
+        .PictureAlignment = 2 'Center
+        .PictureTiling = False
+        .Picture = filepath
+    End With
+End Sub
