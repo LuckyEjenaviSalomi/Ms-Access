@@ -25,7 +25,7 @@ Public Function GenerateQR(qrData As Variant, Optional size As String = "150x150
 
     ' Download QR code image as BMP file
 '    result = URLDownloadToFile(0, apiUrl, savePath, 0, 0)
-    Set http = CreateObject("MSXML2.XMLHTTP") '"WinHttpRequest") 'Create an instance of the object
+    Set http = CreateObject("MSXML2.XMLHTTP") '"WinHttpRequest - Early binding
     Set objHTTP = CreateObject("ADODB.Stream")
     
     With http
