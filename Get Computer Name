@@ -1,0 +1,8 @@
+Function GetComputerName() As String
+    Dim objNetwork As Object
+    Set objNetwork = CreateObject("WScript.Network")
+    
+    GetComputerName = objNetwork.ComputerName
+    
+    Set objNetwork = Nothing
+End Function
