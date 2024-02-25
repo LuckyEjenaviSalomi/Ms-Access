@@ -1,36 +1,52 @@
-txtQRData
-imgQRCode
-btnGenerateQR
-
-======================================================================
-Private Declare Function URLDownloadToFile Lib "urlmon" Alias "URLDownloadToFileA" _
-    (ByVal pCaller As Long, ByVal szURL As String, ByVal szFileName As String, _
-     ByVal dwReserved As Long, ByVal lpfnCB As Long) As Long
-
-Private Sub btnGenerateQR_Click()
-   ' Declare variables
+'Returns a file path for the qr code image
+Public Function GenerateQR(qrData As Variant, Optional size As String = "150x150", _
+    Optional filepath As String) As String 'Returns a file path for the qr code image
+    
     Dim apiUrl As String
-    Dim qrData As String
-    Dim savePath As String
-    Dim result As Long
+    Dim http As Object
+    Dim objHTTP As Object
 
-    ' Get QR data from textbox
-    qrData = Me.txtQRData.Value
-
+    'Empty Value
+    If IsNull(qrData) Then
+        MsgBox "No value to generate QR-code", vbExclamation
+        Exit Function
+    End If
+    
+    'File Path validation
+    If Dir(filepath) = "" Or filepath = "" Then
+        filepath = Application.CurrentProject.Path & "\qr_code999999999.bmp"
+    End If
+    
     ' Construct API URL
-    apiUrl = "https://api.qrserver.com/v1/create-qr-code/?data=" & qrData & "&size=200x200"
-
-    ' Specify save path for BMP file in the same directory as the Access database
-    savePath = Application.CurrentProject.Path & "\qr_code.bmp"
+    size = IIf(IsNull(size), "150x150", size) 'Blank Size
+    apiUrl = "https://api.qrserver.com/v1/create-qr-code?" & _
+                "size=" & size & _
+                "&data=" & qrData
 
     ' Download QR code image as BMP file
-    result = URLDownloadToFile(0, apiUrl, savePath, 0, 0)
-
-    ' Check if download was successful
-    If result = 0 Then
-        ' Display the downloaded image in the image control
-        Me.imgQRCode.Picture = savePath
-    Else
-        MsgBox "Failed to download QR code image.", vbExclamation
-    End If
-End Sub
+'    result = URLDownloadToFile(0, apiUrl, savePath, 0, 0)
+    Set http = CreateObject("MSXML2.XMLHTTP") '"WinHttpRequest") 'Create an instance of the object
+    Set objHTTP = CreateObject("ADODB.Stream")
+    
+    With http
+        .Open "GET", apiUrl, False
+        .Send
+        
+        If .Status = 200 Then 'Successful response
+            objHTTP.Open
+            objHTTP.Type = 1 'adTypeBinary
+            objHTTP.Write .ResponseBody
+            objHTTP.SaveToFile filepath, 2 'Overrite if file exist
+        Else 'Failed
+           MsgBox "Failed to download QR code image.", vbExclamation
+            GoTo GetOut
+        End If
+    End With
+    
+    GenerateQR = filepath
+    
+GetOut:
+    'Destroy object
+    Set http = Nothing
+    Set objHTTP = Nothing
+End Function
