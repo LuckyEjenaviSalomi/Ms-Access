@@ -1,0 +1,25 @@
+Function IpAddress() As String
+    'Returns the IP Address (es) of the current computer
+    Dim objNics, objNic
+    Dim strIp As String
+    Dim strComputer As String
+    Dim strIps As String
+    
+    Set objNics = GetObject("winmgmts:").InstancesOf("Win32_NetworkAdapterConfiguration")
+    
+    strIps = ""
+    
+    For Each objNic In objNics
+        If objNic.ipenabled Then
+            strIp = objNic.IpAddress(0)
+            If Len(strIps) > 0 Then strIps = strIps & ","
+            strIps = strIps & strIp
+        End If
+    Next objNic
+    
+    IpAddress = strIps
+    
+    Set objNic = Nothing
+    Set objNics = Nothing
+    
+End Function
