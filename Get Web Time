@@ -1,0 +1,32 @@
+Public Function web_time(Ip_Address As String) As String
+
+   ' Declare variables
+    Dim apiUrl As String
+    Dim http As Object 'WinHttpRequest 'Microsoft WinHttpRequest Lib
+
+    'Empty Value
+    If IsNull(Ip_Address) Then
+        MsgBox "No request was made.", vbExclamation
+        Exit Function
+    End If
+
+    ' Construct API URL
+    apiUrl = "https://worldtimeapi.org/api/ipv4/" & Ip_Address & ".txt"
+    
+    Set http = CreateObject("MSXML2.XMLHTTP") 'Create http request object
+
+    With http
+        .Open "GET", apiUrl, False
+        .Send
+
+        If .Status = 200 Then 'Successful response
+            web_time = .ResponseText
+        Else 'Failed
+           MsgBox "No response was returned", vbExclamation
+        End If
+    End With
+
+GetOut:
+    'Destroy object
+    Set http = Nothing
+End Function
