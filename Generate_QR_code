@@ -1,0 +1,36 @@
+txtQRData
+imgQRCode
+btnGenerateQR
+
+======================================================================
+Private Declare Function URLDownloadToFile Lib "urlmon" Alias "URLDownloadToFileA" _
+    (ByVal pCaller As Long, ByVal szURL As String, ByVal szFileName As String, _
+     ByVal dwReserved As Long, ByVal lpfnCB As Long) As Long
+
+Private Sub btnGenerateQR_Click()
+   ' Declare variables
+    Dim apiUrl As String
+    Dim qrData As String
+    Dim savePath As String
+    Dim result As Long
+
+    ' Get QR data from textbox
+    qrData = Me.txtQRData.Value
+
+    ' Construct API URL
+    apiUrl = "https://api.qrserver.com/v1/create-qr-code/?data=" & qrData & "&size=200x200"
+
+    ' Specify save path for BMP file in the same directory as the Access database
+    savePath = Application.CurrentProject.Path & "\qr_code.bmp"
+
+    ' Download QR code image as BMP file
+    result = URLDownloadToFile(0, apiUrl, savePath, 0, 0)
+
+    ' Check if download was successful
+    If result = 0 Then
+        ' Display the downloaded image in the image control
+        Me.imgQRCode.Picture = savePath
+    Else
+        MsgBox "Failed to download QR code image.", vbExclamation
+    End If
+End Sub
