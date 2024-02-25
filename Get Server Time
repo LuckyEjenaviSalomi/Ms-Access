@@ -20,7 +20,7 @@ Public Function web_time(Ip_Address As String) As String
         .Send
 
         If .Status = 200 Then 'Successful response
-            web_time = .ResponseText
+            web_time = Replace(.ResponseText, Chr(10), vbNewLine)
         Else 'Failed
            MsgBox "No response was returned", vbExclamation
         End If
